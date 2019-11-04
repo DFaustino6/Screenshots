@@ -1,0 +1,65 @@
+/* $Id$ */
+
+body {font-family: Arial;}
+  
+.report {font-size: small}
+
+//.header {background-color: #018cb5; font-size:xx-large; font-weight:bold }
+//.topmenu {background-color: #99ccff; font-size:small}
+//.footer {background-color: #99ccff; font-size:small}
+//.leftmenu {background-color: #999999; font-size:small}
+//.leftmenusel {background-color: #66eeff; font-size:small}
+.submenu {background-color: #ccee99; font-size:small}
+.submenusel {background-color: #9999ff; font-size:small}
+
+.header {font-size:xx-large; font-weight:bold; text-transform: uppercase }
+.topmenu {text-transform: uppercase }
+.footer {font-size:small; color: #878786 }
+.leftmenu {text-transform: uppercase; border-right: thin solid black}
+.leftmenusel {background-color: #ddccff; text-transform: uppercase}
+.submenu {font-size:small; text-transform: uppercase }
+.submenusel {font-size:small; text-transform: uppercase }
+
+.inputlabel { text-transform: uppercase }
+
+tr.bluetop td { border-top: 3px solid #009fe3; }
+tr.blackbottom td { border-bottom: thin solid black }
+
+a:link{ text-decoration:none; color: black }
+a:visited{ text-decoration:none; color: black }
+a:hover{ background-color: #809fe3 }
+
+.evenrow {background-color: #ddccff}
+.oddrow {background-color: #eeeeff}
+.fields {color:blue}
+//.content { background-color: #cc0}
+
+.trh1{background-color:red;}// font-size:large; font-weight:bold}
+.trh2{background-color:green;}// font-size:larger; font-weight:bold}
+.trh3{background-color:blue;} // font-size:larger}
+.trh4{background-color:yellow;} // font-weight:bold}
+
+@media print {
+	.leftmenu{ display: none;}
+	.topmenu{ display: none;}
+	.submenu{ display: none;}
+	
+	.leftmenucss{ display: none;}
+	.contentcss{ display: none;}
+
+}
+
+.leftmenucss{
+	//background-color: #999999;
+	font-size: small;
+	width: 20%;
+	height: 100%;
+	text-transform: uppercase;
+}
+.contentcss{
+	position: absolute;
+	right: 10%;
+	background-color: #cc0;
+	width: 80%;
+	float: left;
+}

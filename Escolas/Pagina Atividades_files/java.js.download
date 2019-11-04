@@ -1,0 +1,678 @@
+//
+// $Id: java.js 19 2007-02-08 01:50:06Z pmguerre $
+//
+// 2005-2006 (c) Pedro Guerreiro (pmguerre@ualg.pt), Roberto Lam (rlam@ualg.pt)
+//
+// java.js - Funções de controlo das forms em javascript
+//
+
+/****************************************************************************
+    FIXME
+
+    TODO
+ 4. Limpar alertas
+
+
+    DONE
+ 1. O segundo endereço de email, se existir, também deve ser válido...
+ 2. Se não for escolhida nenhuma actividade também deve ser assinalado
+ 3. O campo transporte também deve ser verificado...
+ ****************************************************************************/
+
+var k=0;
+//var NumAlunos=0;
+var actividades= new Array(150);
+
+var refs= new Array(150);
+
+var CodHora=new Array(16);
+
+CodHora[0]="1";
+CodHora[1]="2";
+CodHora[2]="3";
+CodHora[3]="4";
+CodHora[4]="5";
+CodHora[5]="6";
+CodHora[6]="7";
+CodHora[7]="8";
+CodHora[8]="9";
+CodHora[9]="10";
+CodHora[10]="11";
+CodHora[11]="12";
+CodHora[12]="13";
+CodHora[13]="14";
+CodHora[14]="15";
+CodHora[15]="16";
+CodHora[16]="17";
+
+
+
+/*************************************************/
+//
+// todo fix first if(cont==0) as the else branch
+//
+//
+
+function detActividadesRefs() {
+
+    //alert("detActividadesRefs()in");
+    var j;
+    var i;
+    var cont=0;
+    var act=' ';
+
+    //alert("Num elementos ->" + parseInt(document.forms[0].elements.length));
+    for(j=0; j < document.forms[0].elements.length; j++){
+	//alert("j ->" + parseInt(j));
+	/*
+	alert(document.forms[0].elements[j].name);
+	act=document.forms[0].elements[j].name;
+	alert("act ->" + act);
+	alert("cont ->" + parseInt( cont ));
+	actividades[cont]=act;
+	alert("actividades[cont]" + actividades[cont]);
+	*/
+
+
+	//alert("j ->" + parseInt(j) + " Nome : " + actividades[cont] + " <- " + parseInt(cont));
+	//alert("type ->" + document.forms[0].elements[j].type);
+
+	if(cont == 0){
+	    actividades[cont]=document.forms[0].elements[j].name;
+	    for(i=0; i< document.forms[0].elements[actividades[cont]].length; i++){
+		if ( document.forms[0].elements[actividades[cont]][i].checked){
+		    refs[cont]=document.forms[0].elements[actividades[cont]][i].value;
+           	}
+	    }
+	    cont++;
+
+	}else{
+	    //if(document.forms[0].elements[j].type != "reset" && document.forms[0].elements[j].type != "hidden" && document.forms[0].elements[j].type != "submit"){
+        if(document.forms[0].elements[j].type == "radio") {
+		if(actividades[cont-1] != document.forms[0].elements[j].name){
+		    actividades[cont]=document.forms[0].elements[j].name;
+		    if (isNaN(document.forms[0].elements[actividades[cont]].length)){
+			if ( document.forms[0].elements[actividades[cont]].checked){
+			    refs[cont]=document.forms[0].elements[actividades[cont]].value;
+			    //break;
+			}
+		    }else{
+            //alert(document.forms[0].elements[actividades[cont]].length);
+			for(i=0; i< document.forms[0].elements[actividades[cont]].length; i++){
+			    if ( document.forms[0].elements[actividades[cont]][i].checked){
+				refs[cont]=document.forms[0].elements[actividades[cont]][i].value;
+				//break;
+			    }
+			}
+		    }
+		    cont++;
+		}
+	    } // elseif
+	}
+    //if(j==295) alert(document.forms[0].elements[actividades[cont]].length);
+    }
+    /*
+    j=cont-5;
+    alert("Activ :" + actividades[j] + "->" + refs[j]);
+    alert("Activ :" + actividades[j+1] + "->" + refs[j+1]);
+    alert("Activ :" + actividades[j+2] + "->" + refs[j+2]);
+    alert("Activ :" + actividades[j+3] + "->" + refs[j+3]);
+    alert("Activ :" + actividades[j+4] + "->" + refs[j+4]);
+    */
+    k=cont;
+    //alert(k);
+}
+
+/*************************************************/
+function checkhora() {
+
+    var i;
+    var j;
+    var aux=' ';
+    var cont=0;
+    var hin=0;
+    var hfi=0;
+    var vazio=0;
+
+    //alert("checkhora() In");
+
+    for(i=0; i<17; i++){
+	aux=CodHora[i] ;
+	cont=0;
+	for( j=0; j<k; j++){
+	    if(aux == refs[j]){
+		if(cont==0){
+		    hin=j;
+		}else{
+		    hfi=j;
+		}
+		cont++;
+	    }
+	    if(cont>1){
+		alert("Não pode marcar duas visitas na mesma hora:\n"+
+		    "Actividade : " + parseInt(hin+1) + "\n"+
+		    "Actividade : " + parseInt(hfi+1) + "\n\n"+
+		    "Por favor verifique as horas das actividades em questão.");
+		//clear_radio_buttons_block(hfi);
+		//clear_radio_buttons_block(hin);
+		//alert(refs[hin]);
+		//alert(refs[hfi]);
+		//document.forms[0].elements.name[actividade[hfi]]
+		return false;
+	    }
+
+	}
+    }
+    aux='';
+
+    for( j=0; j<k; j++){
+	if(refs[j]!=' ')
+	    vazio++;
+    }
+    //alert(vazio);
+    if( vazio==0 ){
+	alert("Não pode prosseguir sem marcar visitas!");
+	return false;
+    }
+
+    //alert("checkhora() Out");
+
+    return true;
+}
+/***************************************************************************/
+
+function checkemail(which){
+
+    if (which.indexOf("@")!=-1&& which.indexOf(".")!=-1)
+	return 1;
+    else
+	return 0;
+}
+
+/***************************************************************************/
+function clear_radio_buttons_block(ind) {
+
+    var i=0;
+    //alert(ind);
+    if (isNaN(document.forms[0].elements[actividades[ind]].length)){
+	if ( document.forms[0].elements[actividades[ind]].checked){
+	    document.forms[0].elements[actividades[ind]].checked=true;
+	}
+    }else{
+	for(i=0; i< document.forms[0].elements[actividades[ind]].length; i++){
+	    if ( document.forms[0].elements[actividades[ind]][i].checked){
+		document.forms[0].elements[actividades[ind]][i].checked=false;
+		//document.forms[0].elements[0].focus();
+	    }
+	}
+	//document.forms[0].elements[actividades[ind]][0].focus();
+    }
+    //return false;
+}
+
+/***************************************************************************/
+function valida(opcao){
+
+    var j;
+
+    if(opcao==2){
+
+	//alert("valida(2) In");
+
+	for(j=0; j<150; j++){
+	    refs[j]=' ';
+	}
+
+        detActividadesRefs();
+        //alert("valida() In");
+
+
+        //alert("actividades");
+        for(j=0; j<k; j++){
+	    if(refs[j]!= ''){
+		//alert("Activ: " + actividades[j] + " Cod: " + refs[j] );
+	    }
+	}
+
+        if(!checkhora()){
+	    return false ;
+        }
+
+	//alert("valida() Out Num acti: " +parseInt(k));
+    }
+    if(opcao==1){
+
+	//alert("Valida(1)");
+	var textstring = '';
+	var txt;
+	var box;
+
+	for (i=0;i<10;i++) {
+	    box = document.forms[0].elements[i];
+	    if (!box.value){
+		alert('Deve preencher o campo: ' + box.name + '!');
+		box.focus();
+		return false;
+	    }
+	}
+
+	/*n=document.forms[0].elements.ano.value;
+	//alert(n);
+	if(isNaN(n)) {
+	    alert('No campo Ano deve indicar um número');
+        document.forms[0].elements.ano.select();
+	    document.forms[0].elements.ano.focus();
+	    return false;
+	}*/
+
+    n=document.forms[0].elements.nalunos.value;
+	//alert(n);
+	if(isNaN(n)) {
+	    alert('No campo Nº de Alunos deve indicar um número');
+        document.forms[0].elements.nalunos.select();
+	    document.forms[0].elements.nalunos.focus();
+	    return false;
+	}
+        n=document.forms[0].elements.ndocentes.value;
+	//alert(n);
+	if(isNaN(n)) {
+	    alert('No campo Nº de Docentes deve indicar um número');
+            document.forms[0].elements.ndocentes.select();
+	    document.forms[0].elements.ndocentes.focus();
+	    return false;
+	}
+
+	email1=document.forms[0].elements[9].value;
+	box1 = document.forms[0].elements[9];
+	email2=document.forms[0].elements[12].value;
+	box2 = document.forms[0].elements[12];
+	//alert(txt);
+	if(checkemail(email1)==0){
+	    alert('Endereço de email incorrecto!');
+	    box1.focus();
+	    return false;
+	}
+	if(email2!="" && checkemail(email2)==0){
+	    alert('Endereço de email incorrecto!');
+	    box2.focus();
+	    return false;
+	}
+
+	// transporte
+	box = document.forms[0].elements[13];
+	//alert(box.value);
+	if (box.value==0){
+	    alert('Deve seleccionar o tipo de transporte!');
+	    box.focus();
+	    return false;
+	}
+
+	// almoço
+	box = document.forms[0].elements[19];
+	val = 0;
+	for(i=0; i< document.forms[0].codalmoco.length; i++){
+		if(document.forms[0].codalmoco[i].checked){
+		  	val=1;
+		}
+	}
+	if( val==0 ){
+	    alert('Deve seleccionar o tipo de Almoço!');
+	    box.focus();
+	    return false;
+ 	}
+
+	if(val!=0 && document.forms[0].codalmoco[0].checked==false) {
+	    n=document.forms[0].elements.qtalmocos.value;
+	    //alert(n);
+	    if(isNaN(n) || n==0) {
+		alert('Deve indicar a quantidade de almoços pretendida');
+		document.forms[0].elements.qtalmocos.select();
+		document.forms[0].elements.qtalmocos.focus();
+		return false;
+	    }
+	}
+
+	// escola do dia
+	box = document.forms[0].elements[23];
+	if (box.value==0){
+	    alert('Deve seleccionar o dia de visita!');
+	    box.focus();
+	    return false;
+	}
+
+    }
+
+    return true;
+}
+
+/**************************************************************/
+
+function setCheckedValue(radioObj) {
+
+    if(!radioObj)
+	return;
+
+    var radioLength = radioObj.length;
+
+    if( isNaN(radioLength) ) {
+	radioObj.checked = false;
+    }
+    for(var i = 0; i < radioLength; i++) {
+	radioObj[i].checked = false;
+    }
+
+}
+
+/*
+function determinanumalunos(){
+
+    var j;
+    var aux;
+
+    for(j=0; j< document.forms[0].elements.length; j++) {
+	aux=document.forms[0].elements[j];
+	if(aux.type=="hidden" && aux.name=="nalunos") {
+	    NumAlunos=aux.value;
+	}
+    }
+    alert(' num alunos. '+NumAlunos);
+    return true;
+}
+
+function onLoad() {
+
+    determinanumalunos();
+
+}
+*/
+
+function verificamaxalunos(maxalunos, e) {
+
+    var i,j;
+    NumAlunos=document.forms[0].elements['nalunos'].value;
+    //alert(' num alunos. '+NumAlunos);
+    if( maxalunos < NumAlunos ){
+	    alert('Esta actividade tem '+maxalunos+' vagas livres, o seu grupo tem '+NumAlunos+" alunos.\n"+
+	    "Sugere-se que divida o seu grupo em duas inscrições distintas.");
+          var cBox = (e.target)?e.target:e.srcElement;
+          //alert("Wrong Sequence." + cBox.name);
+          cBox.checked=false;
+          return false;
+    }
+    return true;
+}
+
+/**************************************************************/
+
+// Roberto, daqui para baixo foram funções que fui fazendo...
+// Não apagues/alteres sem falar comigo
+// pmguerre, 31/jan
+
+function limpar() {
+
+    var j;
+    //var aux;
+
+    //alert("Limpar tudo");
+    for(j=0; j< document.forms[0].elements.length; j++) {
+	aux=document.forms[0].elements[j];
+	if(aux.type=="text") {
+	    aux.value="";
+	}else if (aux.type=="radio"){
+	    setCheckedValue(aux);
+	    //aux.checked==false;
+	}else if (aux.type=="select-one") {
+	    aux.selectedIndex=0;
+	}
+    }
+
+    //window.refresh();
+    return true;
+}
+
+/**************************************************************/
+
+function limpa(form, nome) {
+
+    //var j;
+    //var aux;
+
+    //alert("Limpar tudo");
+    //alert(nome);
+    for(j=0; j< document.forms[0].elements.length; j++) {
+	aux=document.forms[0].elements[j];
+	if(aux.name==nome) {
+	    //alert(aux.value);
+	    if(aux.type=="text") {
+		aux.value="";
+	    }else if (aux.type=="radio"){
+		setCheckedValue(aux);
+		//aux.checked==false;
+	    }else if (aux.type=="select-one") {
+		aux.selectedIndex=0;
+	    }
+	}
+    }
+
+    //window.refresh();
+    return true;
+}
+
+/**************************************************************/
+
+/*
+function mysubmit() {
+    alert("Submeter");
+    if (valida(1)==true) {
+	alert("ALL OK, submit");
+	return document.forms[0].submit();
+    }else{
+	alert("Some problem, not submit");
+    }    //document.forms[0].elements[6].select();
+}
+*/
+
+/**************************************************************/
+
+function toggleqtalmocos(form,toggle) {
+
+    //alert("disableqtalmocos: "+toggle+"\n"+document.forms[0].qtalmocos.value);
+
+    if(toggle==false) {
+	//document.forms[0].qtalmocos.disabled=true;
+	form.qtalmocos.disabled=true;
+    }else{
+	//document.forms[0].qtalmocos.disabled=false;
+	form.qtalmocos.disabled=false;
+    }
+}
+
+/**************************************************************/
+
+function printinsc(codgrupo) {
+
+    //text=document.forms[0].printstr.value;
+    var newwindow=window.open('print.php?codgrupo='+codgrupo, '', 'menubar=no,scrollbars=yes,resizable=yes,toolbar=no,status=no');
+    //newwindow.document.write("<html><body onload='window.print();'>");
+    //newwindow.document.write(text);
+    //newwindow.document.write("</body></html>");
+    newwindow.document.close();
+    //window.open('index.php', 'NewTextWindowName','width=750,height=550,menubar=no,scrollbars=yes,resizable=yes,toolbar=yes,status=no')
+}
+
+/**************************************************************/
+
+function confirmsendmail(email) {
+
+    //alert(document.formdelete.elements.length);
+    var ok=confirm('Enviar um email para '+email+'?');
+    if(ok) {
+	//alert('OK, enviando... TODO');
+	//history.back();
+	document.forms[0].submit();
+	return true;
+    }
+    return false;
+}
+
+/**************************************************************/
+
+function confirmdelete(form) {
+    var del1=confirm('Cancelar este registo?');
+    if(del1!=true) {
+        alert('OK, não cancelar.');
+        history.back();
+        return false;
+    }else{
+        var del2=confirm('Tem a certeza?');
+        if(del2!=true) {
+            alert('Uff...');
+            history.back();
+            return false;
+        }else{
+            var mot = prompt("Indique o motivo do cancelamento...");
+            if(mot==null || mot=="") {
+                alert("Como não foi indicado um motivo, o grupo não foi cancelado...");
+                history.back();
+                return false;
+            }else{
+                document.formdelete.motivo.value=mot;
+                //alert(mot);
+                form.submit();
+                return true;
+            }
+        }
+    }
+}
+
+
+function confirmdelete2(form) {
+	if(confirm('Apagar esta actividade?'))
+		if(confirm('Tem a certeza?'))
+			return true;
+	return false;
+}
+
+
+function confirmreset(form, string) {
+	if(confirm('Apagar TODAS as '+string+'?'))
+		if(confirm('Tem a certeza que quer APAGAR TODAS as '+string+'?'))
+			return true;
+	return false;
+}
+
+
+function verificaactividades(opcao, numdias, numhoras) {
+
+	var i=3;
+	var box;
+	var ok=true;
+	var temp;
+	var str="Os seguintes campos devem ser preenchidos:\n\n";
+
+	if(opcao==0) {
+		box=document.forms[0].selcampus;
+		if(box.value==0) {
+			str=str+"- Campus\n";
+			box.focus();
+			ok=false;
+		}
+		box=document.forms[0].selinstituicao;
+		if(box.value==0) {
+			str=str+"- Instituição\n";
+			if(ok)
+				box.focus();
+			ok=false;
+		}
+		i=i+2;
+	}
+
+	box=document.forms[0].seldepartamento;
+	if(box.value==0) {
+		str=str+"- Departamento/Área/Núcleo/Curso\n";
+		if(ok)
+			box.focus();
+		ok=false;
+	}
+	i=i+1;
+
+	box=document.forms[0].seltipoactividade;
+	if(box.value==0) {
+		str=str+"- Tipo de Actividade\n";
+		if(ok)
+			box.focus();
+		ok=false;
+	}
+	i=i+1;
+
+	box=document.forms[0].seldescricao;
+	if(!box.value) {
+		str=str+"- Título/Descrição\n";
+		if(ok)
+			box.focus();
+		ok=false;
+	}
+	i=i+1;
+
+	box=document.forms[0].sellocal;
+	if(!box.value) {
+		str=str+"- Local\n";
+		if(ok)
+			box.focus();
+		ok=false;
+	}
+	i=i+1;
+
+	box=document.forms[0].selduracao;
+	if(!box.value) {
+		str=str+"- Duração\n";
+		if(ok)
+			box.focus();
+		ok=false;
+	}
+	i=i+1;
+
+	box=document.forms[0].selnummaxalunos;
+	if(!box.value) {
+		str=str+"- Número de Participantes\n";
+		if(ok)
+			box.focus();
+		ok=false;
+	}
+	i=i+1;
+
+	temp=false;
+	for(j=i; j<i+numdias; j++)
+		if(document.forms[0].elements[j].checked)
+			temp=true;
+	if(!temp) {
+		str=str+"- Dias\n";
+		if(ok)
+			document.forms[0].elements[i].focus();
+		ok=false;
+	}
+	i=i+numdias;
+
+	temp=false;
+	for(j=i; j<i+numhoras; j++)
+		if(document.forms[0].elements[j].checked)
+			temp=true;
+	if(!temp) {
+		str=str+"- Horas\n";
+		if(ok)
+			document.forms[0].elements[i].focus();
+		ok=false;
+	}
+	//i=i+1;
+	if(!ok)
+		alert(str);
+
+	return ok;
+}
+
+/*
+function disable(form,nome) {
+    alert('disable others'+nome);
+    form.elements[nome].checked=false;
+}
+*/
